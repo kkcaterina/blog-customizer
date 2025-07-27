@@ -25,26 +25,23 @@ export type FormProps = {
 };
 
 export const ArticleParamsForm = ({ setAppSettings }: FormProps) => {
-	const [isOpen, setIsOpen] = useState<boolean>(false);
+	const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 	const [formSettings, setFormSettings] =
 		useState<ArticleStateType>(defaultArticleState);
 	const asideRef = useRef<HTMLElement>(null);
 
 	useEffect(() => {
+		if (!isMenuOpen) return;
 		const handleClose = (e: MouseEvent) => {
-			if (
-				isOpen &&
-				asideRef.current &&
-				!asideRef.current.contains(e.target as Node)
-			) {
-				setIsOpen(false);
+			if (asideRef.current && !asideRef.current.contains(e.target as Node)) {
+				setIsMenuOpen(false);
 			}
 		};
 		document.addEventListener('mousedown', handleClose);
 		return () => {
 			document.removeEventListener('mousedown', handleClose);
 		};
-	}, [isOpen]);
+	}, [isMenuOpen]);
 
 	const {
 		backgroundColor,
@@ -87,11 +84,13 @@ export const ArticleParamsForm = ({ setAppSettings }: FormProps) => {
 	return (
 		<>
 			<ArrowButton
-				isOpen={isOpen}
-				onClick={() => setIsOpen((prevState) => !prevState)}
+				isOpen={isMenuOpen}
+				onClick={() => setIsMenuOpen((prevState) => !prevState)}
 			/>
 			<aside
-				className={clsx(styles.container, { [styles.container_open]: isOpen })}
+				className={clsx(styles.container, {
+					[styles.container_open]: isMenuOpen,
+				})}
 				ref={asideRef}>
 				<form
 					className={styles.form}
